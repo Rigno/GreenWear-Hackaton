@@ -1,0 +1,320 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load mathfilters %}
+{% load custom_tags %}
+
+{% block title %}Shop - GreenWear{% endblock title %}
+{% block description %}Scopri un mondo di vestiti eco-friendly.{% endblock description %}
+
+{% block page_syle %}<link href="{% static 'css/shop.css' %}" rel="stylesheet" />{% endblock page_syle %}
+
+{% block content %}
+<!-- Header -->
+<div class="header">
+    <div class="header-text d-flex flex-column justify-content-center align-items-center text-center">
+        {% if request.GET.ricerca and request.GET.ricerca != '' %}
+        <h1 class="fw-bold text-white text-uppercase">RICERCA PER "{{ request.GET.ricerca }}"</h1>
+        {% elif request.GET.categoria and request.GET.categoria != '' %}
+        <h1 class="fw-bold text-white text-uppercase">{{ request.GET.categoria }}</h1>
+        {% else %}
+        <h1 class="fw-bold text-white">ESPLORA IL NEGOZIO</h1>
+        {% endif %}
+        <div class="d-flex align-items-center gap-3">
+            <div><a class="text-white" href="{% url 'home' %}">home</a></div>
+            <div class="text-white">/</div>
+            <div><span class="text-white fw-bold">shop</span></div>
+        </div>
+    </div>
+</div>
+<main class="m-5">
+
+    <div class="row">
+        <!-- Filters -->
+        <div class="col-12 col-md-6 col-lg-3">
+            <aside class="filter-wrapper d-flex flex-column justify-content-start align-items-center px-4" >
+                <button class="menu-button d-md-none btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters" aria-label="Filters">
+                    <i data-feather="menu"></i> Filtri
+                </button>
+                <div class="offcanvas-md offcanvas-start" tabindex="-1" id="offcanvasFilters">
+                    <div class="menu-header offcanvas-header px-5">
+                        <h3 class="fw-bold">Filtri</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvasFilters" aria-label="Close"></button>
+                    </div>
+                    <div class="menu-body offcanvas-body d-flex flex-column justify-content-start align-items-start px-5 gap-5">
+                        <!-- categories -->
+                        <div class="filter-category">
+                            <div class="d-flex flex-column justify-content-between align-items-start gap-3">
+                                <h2 class="fw-bold">Categorie</h2>
+                                {% for category in categories %}
+                                <a class="filter-item" href="{% update_params 'categoria' category.name|lower request.GET.urlencode %}">
+                                    {{ category.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- price -->
+                        <div class="filter-price">
+                            <h2 class="fw-bold">Prezzo</h2>
+                            <div class="d-flex justify-content-between align-items-center gap-2 mt-3">
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-lg" placeholder="Min." name="prezzo_min" {% if request.GET.prezzo_min %}value="{{ request.GET.prezzo_min }}"{% endif %} form="filterForm">
+                                    <span class="input-group-text">€</span>
+                                </div>
+                                <div>-</div> 
+                                <div class="input-group input-group-sm">
+                                    <input type="text" class="form-control form-control-lg" placeholder="Max." name="prezzo_max" {% if request.GET.prezzo_max %}value="{{ request.GET.prezzo_max }}"{% endif %} form="filterForm">
+                                    <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-start align-items-center gap-3 mt-2">
+                                <button type="submit" class="btn btn-success rounded-0" onclick="$('#filterForm').submit();">Applica</button>
+                                <div class="fw-medium" style="color:#878787;">Prezzo: {% if request.GET.prezzo_min %}€{{ request.GET.prezzo_min }}{% else %}€0{% endif %} - {% if request.GET.prezzo_max %}€{{ request.GET.prezzo_max }}{% endif %}</div>
+                            </div>
+                        </div>
+                        <!-- size -->
+                        <div class="filter-size">
+                            <h2 class="fw-bold">Taglia</h2>
+                            <div class="d-flex flex-wrap justify-content-start align-items-center mt-3">
+                                {% for size in sizes %}
+                                <a class="size-item {% if request.GET.taglia == size.1 %}active{% endif %}" href="{% update_params 'taglia' size.1 request.GET.urlencode %}">{{ size.1 }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- color -->
+                        <div class="filter-color">
+                            <h2 class="fw-bold">Colore</h2>
+                            <div class="d-flex flex-wrap justify-content-start align-items-center gap-2 mt-3">
+                                {% for color in colors %}
+                                <a class="color-item {% if request.GET.colore == color.1 %}active{% endif %}" href="{% update_params 'colore' color.1 request.GET.urlencode %}">
+                                    {% if color.0 != 'multicolor' %}
+                                    <i data-feather="circle" fill="{{ color.0 }}" stroke-width="1"></i>
+                                    {% else %}
+                                    <i data-feather="plus-circle" stroke-width="1"></i>
+                                    {% endif %}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- brand -->
+                        <div class="filter-brand">
+                            <h2 class="fw-bold">Marche</h2>
+                            <div class="d-flex flex-column justify-content-between align-items-start gap-1 mt-3 position-relative">
+                                {% for brand in brands|slice:'0:8' %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="marca" value="{{ brand.name }}" id="flexCheckChecked{{ forloop.counter }}" form="filterForm" {% if request.GET.marca == brand.name %}checked{% endif %}>
+                                    <label class="form-check-label" for="flexCheckChecked{{ forloop.counter }}">
+                                        {{ brand.name }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                                <div class="collapse" id="collapseExample">
+                                    {% for brand in brands|slice:'8:' %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="marca" value="{{ brand.name }}" id="flexCheckChecked{{ forloop.counter|add:8 }}" form="filterForm" {% if request.GET.marca == brand.name %}checked{% endif %}>
+                                        <label class="form-check-label" for="flexCheckChecked{{ forloop.counter|add:8 }}">
+                                            {{ brand.name }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="collapse-filter" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                    Mostra altro
+                                </a>
+                                <button type="submit" class="btn btn-outline-success btn-sm rounded-0 mt-2" onclick="$('#filterForm').submit();">Applica</button>
+                            </div>
+                        </div>
+                        <!-- reset filters -->
+                        <a href="{% url 'shop' %}" class="text-decoration-underline">Azzera filtri</a>
+                    </div>
+                </div>  
+            </aside>
+        </div>
+        <!-- Content -->
+        <div class="col-12 col-md-6 col-lg-9">
+            <!-- error message -->
+            {% if products|length == 0 %}
+            <div class="d-flex flex-column align-items-center p-5 m-5">
+                <div>Nessun prodotto trovato secondo le ricerche.</div>
+                <a href="{% url 'shop' %}" class="btn btn-outline-success mt-3">Torna indietro</a>
+            </div>
+            {% else %}
+            <!-- options -->
+            <div class="options-wrapper row mb-2">
+                <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between gap-3">
+                    <!-- order -->
+                    <div class="option-order">
+                        <div class="d-flex justify-content-center align-items-center gap-2">
+                            <div class="text-nowrap">Ordina per:</div>
+                            <select class="sort-option form-select form-select-sm" name="ordine" form="filterForm">
+                                {% with ordine=request.GET.ordine %}
+                                <option value="preferiti" {% if ordine == 'Preferiti' %}selected{% endif %}>Preferiti</option>
+                                <option value="nuovi" {% if ordine == 'nuovi' %}selected{% endif %}>Ultimi arrivi</option>
+                                <option value="sostenibili" {% if ordine == 'sostenibili' %}selected{% endif %}>Più sostenibili</option>
+                                <option value="prezzo_maggiore" {% if ordine == 'prezzo_maggiore' %}selected{% endif %}>Prezzo maggiore</option>
+                                <option value="prezzo_minore" {% if ordine == 'prezzo_minore' %}selected{% endif %}>Prezzo minore</option>
+                                {% endwith %}
+                            </select>
+                        </div>
+                    </div>
+                    <!-- searchbar -->
+                    <div class="option-searchbar">
+                        <div class="search-wrapper">
+                            <input type="text" class="search-input" placeholder="Ricerca" name="ricerca" value="{{ request.GET.ricerca }}" form="filterForm" onkeydown="$(this).keydown(function(event) {if (event.key === 'Enter'){$('#filterForm').submit();}});">
+                            <i class="search-icon" data-feather="search"></i>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- cards -->
+            <div class="product-wrapper row">
+                <!--card -->
+                {% for product in products %}
+                <div class="col-12 col-lg-6 col-xxl-4 py-3 d-flex align-items-center justify-content-center">
+                    <a class="card" href="{% url "product" product.slug %}">
+                        <div class="card-top">
+                            <!-- image -->
+                            {% for image in product.product_images.all %}
+                            {% if image.is_feature %}
+                            <img src="{{ image.image.url }}" class="card-image img-fluid" alt="">
+                            {% endif %}
+                            {% endfor %}
+                            <!-- wishlist -->
+                            <div class="card-wishlist">
+                                {% if product in wishlist_products %}
+                                <i data-feather="heart" fill="#4E4E4E"></i>
+                                {% else %}
+                                <i data-feather="heart"></i>
+                                {% endif %}
+                            </div>
+                            <!-- footprint -->
+                            {% with ratio=product.footprint|div:product.category.average_footprint %}   
+                            {% if ratio < 1 %}
+                            <div class="card-footprint px-3">
+                                <img src="{% static "assets/leaf.svg" %}" class="" alt="">
+                                <div class="fw-semibold">-{{ 1|sub:ratio|mul:100|floatformat:0 }}% di {{ product.category.name }}</div>
+                            </div>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="card-body">
+                            <!-- info -->
+                            <div class="card-text">
+                                <div class="card-brand">{{ product.brand }}</div>
+                                <div class="card-name">{{ product.name }}</div>
+                                <div class="card-price">
+                                    {{ product.price }} € 
+                                    {% if product.discounted_price %}
+                                    <span class="card-discounted-price ps-2">{{ product.discounted_price }} €</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- points -->
+                            {% if product.green_points %}
+                            <div class="card-points">
+                                <div class="points">+{{ product.green_points }}</div>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1.25rem" viewBox="0 0 512 512">
+                                    <path style="fill:#5e8e56" d="M512 32c0 113.6-84.6 207.5-194.2 222c-7.1-53.4-30.6-101.6-65.3-139.3C290.8 46.3 364 0 448 0h32c17.7 0 32 14.3 32 32zM0 96C0 78.3 14.3 64 32 64H64c123.7 0 224 100.3 224 224v32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320C100.3 320 0 219.7 0 96z"/>
+                                </svg>                
+                            </div>
+                            {% endif %}
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <!-- pagination -->
+            {% if page_obj.paginator.num_pages > 1 %}
+            <nav class="pagination d-flex justify-content-center align-items-center text-center align-middle gap-2 m-5">
+                <!-- Prev Button -->
+                {% if page_obj.has_previous%}
+                <a class="pg-item" href="{% update_params 'page' page_obj.previous_page_number request.GET.urlencode %}" aria-label="Previous">
+                    <i data-feather="chevron-left"></i>
+                </a>
+                {% endif %}
+                <!-- Pages Numers -->
+                {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <a class="pg-item current" href="{% update_params 'page' num request.GET.urlencode %}">{{ num }}</a>
+                {% elif num > page_obj.number|add:"-2" and num < page_obj.number|add:"2" %}
+                <a class="pg-item" href="{% update_params 'page' num request.GET.urlencode %}">{{ num }}</a>
+                {% endif %}
+                {% endfor %}
+                <!-- Next Button -->
+                {% if page_obj.has_next %}
+                <a class="pg-item" href="{% update_params 'page' page_obj.next_page_number request.GET.urlencode %}" aria-label="Next">
+                    <i data-feather="chevron-right"></i>
+                </a>
+                {% endif %}
+            </nav> 
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- filterform submission -->
+    <form class="search-form" action="" method="GET" id="filterForm">
+        <input type="hidden" name="page" value="{{ page_obj.number }}">
+        {% if request.GET.categoria %}<input type="hidden" name="categoria" value="{{ request.GET.categoria }}">{% endif %}
+        {% if request.GET.taglia %}<input type="hidden" name="taglia" value="{{ request.GET.taglia }}">{% endif %}
+        {% if request.GET.colore %}<input type="hidden" name="colore" value="{{ request.GET.colore }}">{% endif %}
+        {% if request.GET.marca %}<input type="hidden" name="marca" value="{{ request.GET.marca }}">{% endif %}        
+    </form>
+
+</main>
+{% endblock content %}
+
+{% block page_scripts %}
+<!-- add to wishlist -->
+<script type="text/javascript">
+    $('.card-wishlist').on('click', function(e){
+        e.preventDefault();
+        var name = $(this).parent().parent().find('.card-name').text();
+        var heart = $(this).children();
+        $.ajax(
+        {  
+            type:"POST",
+            url: "{% url 'modify_wishlist' %}",
+            headers: {'X-CSRFToken': getCookie('csrftoken')},
+            data:{
+                name: name,
+            },
+            success: function( data ) {},
+            complete:function(data) {
+                if (data.responseJSON.is_present) {
+                    $(heart).attr('fill', '#4E4E4E');
+                } else {
+                    $(heart).attr('fill', 'none');
+                }
+            },
+         });
+         function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+<!-- submit form -->
+<script>
+    /* order */
+    var form = $('#filterForm');
+    var order = $('.sort-option');
+    $(order).change(function() {
+        $(order).children('option').click(function() {
+            $(this).attr('selected', 'selected');
+        });
+        $(form).submit();
+    });
+</script>
+{% endblock page_scripts %}
+

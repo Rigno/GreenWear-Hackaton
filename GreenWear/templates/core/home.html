@@ -1,0 +1,212 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% load mathfilters %}
+
+{% block title %}Lo Shopping Sostenibile - GreenWear{% endblock title %}
+{% block description %}Esplora un mondo di vestiti e contribuisci anche tu ad un pianeta sempre pià Green.{% endblock description %}
+
+{% block page_syle %}<link href="{% static 'css/home.css' %}" rel="stylesheet" />{% endblock page_syle %}
+
+{% block content %}
+<main>
+
+    <!-- Hero section -->
+    <div class="hero">
+        <div class="hero-main row">
+            <div class="col-auto col-md-6 d-flex justify-content-center align-items-center">
+                <div class="hero-text d-flex flex-column align-items-start justify-content-center gap-3">
+                    <h1 class="fw-bold">Entra nel mondo dello <span class="gradient">Shopping Sostenibile</span></h1>
+                    <div class="line"></div>
+                    <h5 class="fw-bold">Contribuisci anche tu a ridurre l'impronta ambientale</h5>
+                    <a class="btn button-primary text-white fw-bold" href="{% url "shop" %}">Acquista Sostenibile</a>
+                </div>
+            </div>
+            <div class="col-auto col-md-6">
+                <img class="hero-image img-fluid" src="{% static "assets/hero.jpg" %}" alt="">
+            </div>
+        </div>
+        <div class="hero-info">
+            <div class="d-none d-lg-flex align-items-center justify-content-center gap-3 p-3">
+                <div class="info-1 d-flex flex-column align-items-center gap-3">
+                    <div class="info-image d-flex justify-content-center align-items-center">
+                        6.125.548 Kg
+                    </div>
+                    <div class="info-text">
+                        Vestiti riciclati
+                    </div>
+                </div>
+                <div class="info-2 d-flex flex-column align-items-center gap-3">
+                    <div class="info-image d-flex justify-content-center align-items-center">
+                        3.646
+                    </div>
+                    <div class="info-text">
+                        Capi sostenibili venduti
+                    </div>
+                </div>
+                <div class="info-3 d-flex flex-column align-items-center gap-3">
+                    <div class="info-image d-flex justify-content-center align-items-center">
+                        563.517 Kg
+                    </div>
+                    <div class="info-text">
+                        CO2 risparmiata
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Presentation section -->
+    <div class="presentation">
+        <div class="row d-flex justify-content-center align-items-center mx-3 mx-sm-5">
+            <div class="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                <img src="{% static "assets/presentation.jpg" %}" class="presentation-image img-fluid rounded-top" alt="">
+            </div>
+            <div class="col-12 col-md-6">    
+                <div class="d-flex flex-column align-items-center justify-content-center gap-3 text-center py-5 px-md-5">
+                    <div class="fs-2 fw-bold">Il tuo punto di riferimento per uno shopping sostenibile</div>
+                    <div class="line"></div>
+                    <div>Scopri ogni prodotto con i dettagli sulle <strong>emissioni di CO2</strong>, facendo scelte sempre più consapevoli. Sostenibilità e stile si incontrano qui, guidandoti verso un impatto ambientale ridotto. 
+                        Unisciti a noi nella missione verde e contribuisci a un <strong>futuro</strong> più sostenibile e prendi parte al cambiamento.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Steps section -->
+    <div class="steps">
+        <div class="d-flex flex-column justify-content-center align-items-center py-5 px-3 px-sm-5">
+            <div class="fs-2 fw-bold text-center">Guadagna tu e l'ambiente</div>
+            <div class="row d-flex align-items-start justify-content-between px-3 px-sm-5 mt-5">
+                <div class="col-auto col-md-4 d-flex flex-column align-items-center justify-content-between gap-3 text-center p-4">
+                    <img src="{% static "assets/step1.svg" %}" class="img-fluid" alt="">
+                    <div class="fw-semibold fs-5">Ogni acquisto sonstenibile può fare la differenza</div>
+                    <div>Accumula punti “Green” per ogni prodotto <strong>eco-friendly</strong> e ottieni <strong>sconti esclusivi*</strong>. Il tuo shopping fa la differenza: guadagna punti, risparmia e contribuisci a un futuro più verde.</div>
+                </div>
+                <div class="col-auto col-md-4 d-flex flex-column align-items-center justify-content-between gap-3 text-center p-4">
+                    <img src="{% static "assets/step2.svg" %}" class="img-fluid" alt="">
+                    <div class="fw-semibold fs-5">Accumula punti e guadagna sconti</div>
+                    <div>Ogni prodotto mostra l'impatto di CO2 rispetto alla media della sua categoria.</div>
+                    <ul class="fw-semibold">
+                        <li><90% = 10 pts</li>
+                        <li><75% = 20 pts</li>
+                        <li><50% = 30 pts</li>
+                    </ul>
+                </div>
+                <div class="col-auto col-md-4 d-flex flex-column align-items-center justify-content-between gap-3 text-center p-4">
+                    <img src="{% static "assets/step3.svg" %}" class="img-fluid" alt="">
+                    <div class="fw-semibold fs-5">Gioca, impara e guadagna</div>
+                    <div>Rispondi ai nostri quiz, aumenta il tuo livello e guadagna ulteriori punti apprendendo nuove conoscenze sulla <strong>sostenibilità.</strong></div>
+                    <a class="btn button-primary text-white fw-bold" href="{% url "account" %}">Scopri di più</a>
+                </div>
+            </div>
+            <div class="fw-light text-center mt-5" style="font-size: 0.75rem;">*1000 punti =  10€ di sconto (su un acquisto di oltre 50€)</div>
+        </div>
+    </div>
+
+    <!-- Products section -->
+    <div class="products">
+        <div class="d-flex flex-column justify-content-center align-items-center p-5">
+            <!-- title -->
+            <div class="fs-2 fw-bold text-center">I più sostenibili</div>
+            <!-- card list -->
+            <div class="d-flex flex-column flex-lg-row align-items-start justify-content-center px-5 mt-5 gap-5">
+                <!--card -->
+                {% for product in featured_products %}
+                <a class="card" href="{% url "product" product.slug %}">
+                    <div class="card-top">
+                        <!-- image -->
+                        {% for image in product.product_images.all %}
+                        {% if image.is_feature %}
+                        <img src="{{ image.image.url }}" class="card-image img-fluid" alt="">
+                        {% endif %}
+                        {% endfor %}
+                        <!-- wishlist -->
+                        <div class="card-wishlist">
+                            {% if product in wishlist_products %}
+                            <i data-feather="heart" fill="#4E4E4E"></i>
+                            {% else %}
+                            <i data-feather="heart"></i>
+                            {% endif %}
+                        </div>
+                        <!-- footprint -->
+                        {% with ratio=product.footprint|div:product.category.average_footprint %}   
+                        {% if ratio < 1 %}
+                        <div class="card-footprint px-3">
+                            <img src="{% static "assets/leaf.svg" %}" class="" alt="">
+                            <div class="fw-semibold">-{{ 1|sub:ratio|mul:100|floatformat:0 }}% di {{ product.category.name }}</div>
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="card-body">
+                        <!-- info -->
+                        <div class="card-text">
+                            <div class="card-brand">{{ product.brand }}</div>
+                            <div class="card-name">{{ product.name }}</div>
+                            <div class="card-price">
+                                {{ product.price }} € 
+                                {% if product.discounted_price %}
+                                <span class="card-discounted-price ps-2">{{ product.discounted_price }} €</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- points -->
+                        {% if product.green_points %}
+                        <div class="card-points">
+                            <div class="points">+{{ product.green_points }}</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.25rem" viewBox="0 0 512 512">
+                                <path style="fill:#5e8e56" d="M512 32c0 113.6-84.6 207.5-194.2 222c-7.1-53.4-30.6-101.6-65.3-139.3C290.8 46.3 364 0 448 0h32c17.7 0 32 14.3 32 32zM0 96C0 78.3 14.3 64 32 64H64c123.7 0 224 100.3 224 224v32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320C100.3 320 0 219.7 0 96z"/>
+                            </svg>                
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock content %}
+
+{% block page_scripts %}
+<!-- add to wishlist -->
+<script type="text/javascript">
+    $('.card-wishlist').on('click', function(e){
+        e.preventDefault();
+        var name = $(this).parent().parent().find('.card-name').text();
+        var heart = $(this).children();
+        $.ajax(
+        {  
+            type:"POST",
+            url: "{% url 'modify_wishlist' %}",
+            headers: {'X-CSRFToken': getCookie('csrftoken')},
+            data:{
+                name: name,
+            },
+            success: function( data ) {},
+            complete:function(data) {
+                if (data.responseJSON.is_present) {
+                    $(heart).attr('fill', '#4E4E4E');
+                } else {
+                    $(heart).attr('fill', 'none');
+                }
+            },
+         });
+         function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+</script>
+{% endblock page_scripts %}

@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Accedi - GreenWear{% endblock title %}
+{% block description %}Entra nel tuo account e inizia a risparmiare.{% endblock description %}
+
+{% block content %}
+<main class="">
+
+</main>
+{% endblock content %}
+
+{% block page_scripts %}
+<script type="text/javascript">
+    $('.message-form').on('submit', function(e){
+        e.preventDefault();
+        var name = $('.message-form').find('.message-name').val();
+        var email = $(this).find('.message-email').val();
+        var description = $(this).find('.message-text').val();
+        $.ajax(
+        {  
+            type:"POST",
+            url: "{% url 'home' %}",
+            headers: {'X-CSRFToken': $('[name=csrfmiddlewaretoken]').attr('value')},
+            data:{
+                name: name,
+                email: email,
+                description: description,
+            },
+            beforeSend: function(){
+                $(".form-loader").css("display", "inline-block");
+
+                $('.alert-message').removeClass('alert-success alert-danger');
+            },
+            success: function( data ) {},
+            complete:function(data){
+                $(".form-loader").hide();
+
+                $("#message-form")[0].reset();
+
+                $('.alert-message').addClass('alert-' + data.responseJSON.color).show();
+                $('.alert-message .info-message').text(data.responseJSON.message);
+
+                setTimeout(function () {
+                    $('.alert-message').fadeOut(500);
+                }, 2500);
+            },
+         })
+    });
+</script>
+{% endblock page_scripts %}
