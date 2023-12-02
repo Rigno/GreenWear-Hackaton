@@ -33,11 +33,24 @@ a {
     text-decoration: none;
 }
 
+
+/* MESSAGES */
+.info-alert {
+    max-width: 50%;
+    transform: translateX(50%);
+}
+.info-alert-home {
+    max-width: 50%;
+    bottom: 1.5rem;
+    left: 2rem;
+    z-index: 5000;
+}
+
 /* COLORS */
 .text-green {
     color: var(--green);
 }
-div, p, option, a {
+div, p, option, a, span, label {
     color: var(--text-body);
 }
 
@@ -273,8 +286,18 @@ div, p, option, a {
 
 /* NAVBAR */
 .account-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
+}
+.account-icon.profile-image {
+    overflow: hidden;
+    border-radius: 50%;
+    width: 2.25rem;
+    height: 2.25rem;
+    object-fit: cover;
+    padding: 1px;
+    border: var(--green) solid 2px;
+    padding: 2px;
 }
 .logo {
     position: absolute;

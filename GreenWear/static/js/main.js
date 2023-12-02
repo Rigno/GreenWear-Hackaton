@@ -11,5 +11,11 @@ $(document).ready(function() {
             $(preloader).fadeOut();
         }
     }, 7000);
-    
+
+    /* ALERT FADE */
+    var msg = $('.info-alert-home');
+    setTimeout(function () {
+        $(msg).fadeOut(1000);
+    }, 2500);
+
 });

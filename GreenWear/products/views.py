@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
-from products.models import Product
+from products.models import Product, Size, Color
 from cart.models import Cart, CartItem
 
 
@@ -8,8 +8,8 @@ from cart.models import Cart, CartItem
 def product(request, slug):
     product_detail = get_object_or_404(Product, slug=slug)
     other_products = Product.objects.order_by('?').exclude(slug=product_detail.slug)[0:3]
-    sizes = Product.SIZES
-    colors = Product.COLORS
+    sizes = Size.objects.all()
+    colors = Color.objects.all()
 
     context = {
         'product': product_detail,

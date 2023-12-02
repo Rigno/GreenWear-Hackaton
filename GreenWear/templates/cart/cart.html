@@ -4,53 +4,153 @@
 {% block title %}Carrello - GreenWear{% endblock title %}
 {% block description %}Procedi al checkout e assicurati i tuoi prodotti.{% endblock description %}
 
-{% block content %}
-<main class="">
+{% block page_syle %}<link href="{% static 'css/cart.css' %}" rel="stylesheet" />{% endblock page_syle %}
 
-    {% for product in cart.cartitem_set.all %}
-    name: {{ product.product.name }}
-    quantity: {{ product.quantity }}
-    {% endfor %}
+{% block content %}
+<main class="m-4 m-sm-5 pb-5">
+
+    <!-- Info Messages -->
+    {% if messages %}
+    <div class="info-alert-home alert alert-danger position-fixed py-2 px-3" role="alert">
+        {% for message in messages %}
+        {% if forloop.last %}
+        <p class="info-message fs-6 pe-2 m-0">{{ message }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="cart-wrapper d-flex flex-column flex-xl-row justify-content-between align-items-start gap-5">
+        <!-- products -->
+        <div class="d-flex flex-column justify-content-between align-items-start gap-4 w-100">
+            <!-- header -->
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h1 class="fw-bold">Carrello</h1>
+                <div class="">{{ cart.get_total_items }} prodotti</div>
+            </div>
+            <div class="border-bottom w-100"></div>
+            <!-- product item -->
+            {% if cart.cartitem_set.all|length == 0 %}
+            <div class="text-center w-100 mt-5">Nessun prodotto nel carrello</div>
+            {% endif %}
+            {% for item in cart.cartitem_set.all %}
+            <div class="d-flex flex-row justify-content-start align-items-start align-items-md-center gap-5 w-100">
+                <!-- image -->
+                <a class="cart-item-image" href="{% url "product" item.product.slug %}">
+                    {% for image in item.product.product_images.all %}
+                    {% if image.is_feature %}
+                    <img src="{{ image.image.url }}" class="w-100" alt="">
+                    {% endif %}
+                    {% endfor %}
+                </a>
+                <!-- description -->
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 w-100">
+                    <!-- infos -->
+                    <div class="cart-item-info">
+                        <div>
+                            <div class="cart-item-brand">{{ item.product.brand }}</div>
+                            <div class="cart-item-name mt-1">{{ item.product.name }}</div>
+                        </div>
+                        <div class="cart-item-color">Colore: {{ item.product.color }}</div>
+                        <div class="cart-item-color">Consumi: {{ item.product.footprint }}Kg</div>
+                    </div>
+                    <!-- points -->
+                    <div class="cart-item-point d-flex justify-content-start justify-content-md-center">
+                        {% if item.product.green_points %}
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="points">+{{ item.product.green_points }} pts</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.25rem" viewBox="0 0 512 512">
+                                <path style="fill:#5e8e56" d="M512 32c0 113.6-84.6 207.5-194.2 222c-7.1-53.4-30.6-101.6-65.3-139.3C290.8 46.3 364 0 448 0h32c17.7 0 32 14.3 32 32zM0 96C0 78.3 14.3 64 32 64H64c123.7 0 224 100.3 224 224v32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320C100.3 320 0 219.7 0 96z"/>
+                            </svg>                
+                        </div>
+                        {% else %}
+                        <a class="tooltip-point d-flex align-items-center gap-2" href="{% url "shop" %}?categoria={{ item.product.category.name }}&ordine=sostenibili">
+                            <div class="points">sostituisci</div>
+                            <i data-feather="alert-triangle" class="text-danger"></i>
+                            <span class="tooltip-point-text">Questo prodotto consuma molta CO2, considera di sostituirlo con un altro della categoria</span> 
+                        </a>
+                        {% endif %}
+                    </div>
+                    <!-- quantity -->
+                    <div class="quantity-selector">
+                        <form class="" action="{% url 'modify_item_quantity' item.product.slug %}" method="POST" id="cartItemForm">
+                            {% csrf_token %}
+                            <input type="number" id="typeNumber" class="form-control" name="quantità" min="1" max="100" step="1" value="{{ item.quantity }}" placeholder="1" onkeydown="$(this).keydown(function(event) {if (event.key === 'Enter'){$('#cartItemForm').submit();}});" />
+                        </form>
+                    </div>
+                    <!-- Price -->
+                    <div class="product-price">
+                        {% if item.product.discounted_price %}
+                        €{{ item.product.discounted_price }}
+                        {% else %}
+                        €{{ item.product.price }}
+                        {% endif %}
+                    </div>
+                    <!-- remove item -->
+                    <a href="{% url "remove_item" item.product.slug %}">
+                        <i data-feather="trash-2"></i>
+                    </a>
+                </div>
+            </div>
+            {% if not forloop.last %}
+            <div class="border-bottom w-100"></div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <!-- checkout -->
+        <div class="checkout-wrapper d-flex flex-column justify-content-between align-items-start gap-5 p-5">
+            <!-- total -->
+            <div class="d-flex flex-column justify-content-between align-items-start gap-3 w-100">
+                <h3 class="fw-bold">Totale</h3>
+                <!-- total -->
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div>Totale prodotti:</div>
+                    <div>€{{ cart.get_total }}</div>
+                </div>
+                <!-- shipping -->
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div>Spedizione:</div>
+                    <div>€0</div>
+                </div>
+                <!-- tax -->
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div>Iva:</div>
+                    <div>Inclusa</div>
+                </div>
+                <!-- discount -->
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div>Sconto:</div>
+                    <div>- €{{ discount }}</div>
+                </div>
+                <div class="border-bottom w-100"></div>
+                <!-- total euro -->
+                <div class="d-flex justify-content-between align-items-baseline w-100">
+                    <div class="fw-medium fs-5">Totale:</div>
+                    <div class="fw-semibold fs-4">€{{ cart_total }}</div>
+                </div>
+            </div>
+            <!-- discount -->
+            <div class="w-100">
+                <div>Inserisci un codice sconto:</div>
+                <form class="search-form d-flex gap-2" action="" method="GET" id="cartForm">
+                    {% csrf_token %}
+                    <input class="form-control" style="background-color:#F9FAFB;" name="codice_sconto" {% if request.GET.codice_sconto %}value="{{ request.GET.codice_sconto }}"{% endif %} type="text"aria-label="default input example">
+                    <button type="submit" class="btn btn-outline-secondary">Applica</button>
+                </form>
+            </div>
+            <!-- buttons -->
+            <div class="d-flex flex-column gap-3 w-100">
+                <a href="{% url "checkout" %}" type="submit" class="btn btn-dark rounded-5 py-2 fw-bold">PAGAMENTO</a>
+                <a href="{% url "checkout" %}" type="submit" class="btn btn-outline-dark rounded-5 fw-bold">
+                    PAGA CON
+                    <img src="{% static "assets/paypal_logo.svg" %}" class="ps-2"  alt="">
+                </a>
+            </div>
+        </div>
+    </div>
 
 </main>
 {% endblock content %}
 
 {% block page_scripts %}
-<script type="text/javascript">
-    $('.message-form').on('submit', function(e){
-        e.preventDefault();
-        var name = $('.message-form').find('.message-name').val();
-        var email = $(this).find('.message-email').val();
-        var description = $(this).find('.message-text').val();
-        $.ajax(
-        {  
-            type:"POST",
-            url: "{% url 'home' %}",
-            headers: {'X-CSRFToken': $('[name=csrfmiddlewaretoken]').attr('value')},
-            data:{
-                name: name,
-                email: email,
-                description: description,
-            },
-            beforeSend: function(){
-                $(".form-loader").css("display", "inline-block");
-
-                $('.alert-message').removeClass('alert-success alert-danger');
-            },
-            success: function( data ) {},
-            complete:function(data){
-                $(".form-loader").hide();
-
-                $("#message-form")[0].reset();
-
-                $('.alert-message').addClass('alert-' + data.responseJSON.color).show();
-                $('.alert-message .info-message').text(data.responseJSON.message);
-
-                setTimeout(function () {
-                    $('.alert-message').fadeOut(500);
-                }, 2500);
-            },
-         })
-    });
-</script>
 {% endblock page_scripts %}

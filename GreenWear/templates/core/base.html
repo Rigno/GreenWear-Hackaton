@@ -66,9 +66,9 @@
                         </svg>                
                     </div>
                     <!-- user -->
-                    {% if user.profile.avatar %}
+                    {% if user.profile_picture %}
                     <a class="nav-link" href="{% url 'account' %}">
-                        <img class="account-icon" src="{{ user.profile_picture.url }}" alt="" />
+                        <img class="account-icon profile-image" src="{{ user.profile_picture.url }}" alt="" />
                     </a>
                     {% else %}
                     <a class="nav-link" href="{% url 'account' %}">
@@ -128,6 +128,7 @@
                     </svg>                
                 </div>
                 <a class="menu-link" href="{% url 'account' %}">Account</a>
+                <a class="menu-link" href="{% url 'logout' %}">Log Out</a>
             </div>
             {% else %}
             <div class="d-flex flex-column gap-3">

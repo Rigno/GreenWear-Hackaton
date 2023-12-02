@@ -4,48 +4,130 @@
 {% block title %}Account - GreenWear{% endblock title %}
 {% block description %}Modifica le impostazioni del tuo profilo.{% endblock description %}
 
+{% block page_syle %}<link href="{% static 'css/account.css' %}" rel="stylesheet" />{% endblock page_syle %}
+
 {% block content %}
-<main class="">
+<main class="m-5 pb-5">
+
+    <!-- Alert Messages -->
+    {% if messages %}
+    <div class="info-alert-home alert alert-success position-fixed py-2 px-3" role="alert">
+        {% for message in messages %}
+        {% if forloop.last %}
+        <p class="info-message fs-6 pe-2 m-0">{{ message }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="d-flex flex-column justify-content-between align-items-start gap-3 w-100">
+        <!-- header -->
+        <div class="w-100">
+            <h1 class="fw-bold">Account</h1>
+        </div>
+        <div class="border-bottom w-100"></div>
+        <!-- settings -->
+        <div class="account-wrapper d-flex flex-wrap justify-content-start align-items-start gap-3 mt-3 align-self-stretch flex-fill">
+            <!-- account -->
+            <div class="account-item d-flex flex-column justify-content-between align-items-center gap-4 p-5 align-self-stretch flex-fill">
+                <!-- image -->
+                {% if user.profile_picture %}
+                <img class="account-image" src="{{ user.profile_picture.url }}" alt="" />
+                {% else %}
+                <img class="nav-link account-image" src="{% static 'assets/default-user.jpg' %}" alt="">
+                {% endif %}
+                <!-- name -->
+                <div class="fs-3 fw-bold">{{ user.username }}</div>
+                <!-- points -->
+                <div class="account-points px-3">
+                    <div class="fw-semibold">+{{ user.green_points }} pts</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1rem" viewBox="0 0 512 512">
+                        <path style="fill:#5e8e56" d="M512 32c0 113.6-84.6 207.5-194.2 222c-7.1-53.4-30.6-101.6-65.3-139.3C290.8 46.3 364 0 448 0h32c17.7 0 32 14.3 32 32zM0 96C0 78.3 14.3 64 32 64H64c123.7 0 224 100.3 224 224v32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320C100.3 320 0 219.7 0 96z"/>
+                    </svg> 
+                </div>
+                <!-- level -->
+                <div class="account-level d-flex align-items-center justify-content-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1.25rem" viewBox="0 0 384 512"><path fill="#5e8e56" d="M384 312.7c-55.1 136.7-187.1 54-187.1 54-40.5 81.8-107.4 134.4-184.6 134.7-16.1 0-16.6-24.4 0-24.4 64.4-.3 120.5-42.7 157.2-110.1-41.1 15.9-118.6 27.9-161.6-82.2 109-44.9 159.1 11.2 178.3 45.5 9.9-24.4 17-50.9 21.6-79.7 0 0-139.7 21.9-149.5-98.1 119.1-47.9 152.6 76.7 152.6 76.7 1.6-16.7 3.3-52.6 3.3-53.4 0 0-106.3-73.7-38.1-165.2 124.6 43 61.4 162.4 61.4 162.4 .5 1.6 .5 23.8 0 33.4 0 0 45.2-89 136.4-57.5-4.2 134-141.9 106.4-141.9 106.4-4.4 27.4-11.2 53.4-20 77.5 0 0 83-91.8 172-20z"/></svg>
+                    <div class="fw-semibold text-center">Livello: {{ user.get_level_display }}</div>
+                </div>
+                <!-- modify -->
+                <a class="text-decoration-underline" href="{% url "profile_settings" %}">Modifica profilo</a>
+            </div>
+            <!-- rank, quiz -->
+            <div class="d-flex flex-column justify-content-between gap-3 align-self-stretch flex-fill">
+                <!-- rank -->
+                <div class="account-item d-flex flex-column justify-content-between align-items-start gap-3 p-5">
+                    <div class="fs-3 fw-bold">Classifica</div>
+                    <!-- user -->
+                    {% for top_user in top_users %}
+                    <div class="d-flex justify-content-between align-items-center gap-3 w-100">
+                        <div class="d-flex justify-content-start align-items-center gap-3">
+                            <!-- position -->
+                            <div class="rank-position">{{ forloop.counter }}</div>
+                            <!-- image -->
+                            {% if top_user.profile_picture %}
+                            <a href="{% url 'account' %}">
+                                <img class="account-icon profile-image border-0 p-0" src="{{ top_user.profile_picture.url }}" alt="" />
+                            </a>
+                            {% else %}
+                            <a href="{% url 'account' %}">
+                                <img class="account-icon" src="{% static 'assets/default-user.jpg' %}" alt="">
+                            </a>
+                            {% endif %}
+                            <!-- username -->
+                            <div class="fw-bold">{{ top_user.username }}</div>
+                        </div>
+                        <!-- points -->
+                        <div class="rank-points">
+                            <div class="text-light">+{{ top_user.green_points }}</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M15.5 1.6875C15.5 5.01562 13.0215 7.7666 9.81055 8.19141C9.60254 6.62695 8.91406 5.21484 7.89746 4.11035C9.01953 2.10645 11.1641 0.75 13.625 0.75H14.5625C15.0811 0.75 15.5 1.16895 15.5 1.6875ZM0.5 3.5625C0.5 3.04395 0.918945 2.625 1.4375 2.625H2.375C5.99902 2.625 8.9375 5.56348 8.9375 9.1875V10.125V14.8125C8.9375 15.3311 8.51855 15.75 8 15.75C7.48145 15.75 7.0625 15.3311 7.0625 14.8125V10.125C3.43848 10.125 0.5 7.18652 0.5 3.5625Z" fill="white"/>
+                            </svg>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- game -->
+                <div class="account-item d-flex flex-column justify-content-between align-items-start gap-4 p-5">
+                    <div class="fs-3 fw-bold">Gioca</div>
+                    <div class="d-flex justify-content-center align-items-center gap-5">
+                        <a class="account-points px-3" href="{% url "quiz" quiz.id %}">
+                            <div class="fw-semibold">Fai un quiz!</div>
+                        </a>
+                        <div class="border-start" style="height:5rem;"></div>
+                        <div class="d-flex flex-column align-items-center justify-content-center gap-3">
+                            <div class="">
+                                {% for life in lives %}
+                                {% if forloop.counter <= user.quiz_lives %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 384 512"><path fill="#5e8e56" d="M384 312.7c-55.1 136.7-187.1 54-187.1 54-40.5 81.8-107.4 134.4-184.6 134.7-16.1 0-16.6-24.4 0-24.4 64.4-.3 120.5-42.7 157.2-110.1-41.1 15.9-118.6 27.9-161.6-82.2 109-44.9 159.1 11.2 178.3 45.5 9.9-24.4 17-50.9 21.6-79.7 0 0-139.7 21.9-149.5-98.1 119.1-47.9 152.6 76.7 152.6 76.7 1.6-16.7 3.3-52.6 3.3-53.4 0 0-106.3-73.7-38.1-165.2 124.6 43 61.4 162.4 61.4 162.4 .5 1.6 .5 23.8 0 33.4 0 0 45.2-89 136.4-57.5-4.2 134-141.9 106.4-141.9 106.4-4.4 27.4-11.2 53.4-20 77.5 0 0 83-91.8 172-20z"/></svg>
+                                {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" height="1.5rem" viewBox="0 0 384 512"><path fill="#C1C1C1" d="M384 312.7c-55.1 136.7-187.1 54-187.1 54-40.5 81.8-107.4 134.4-184.6 134.7-16.1 0-16.6-24.4 0-24.4 64.4-.3 120.5-42.7 157.2-110.1-41.1 15.9-118.6 27.9-161.6-82.2 109-44.9 159.1 11.2 178.3 45.5 9.9-24.4 17-50.9 21.6-79.7 0 0-139.7 21.9-149.5-98.1 119.1-47.9 152.6 76.7 152.6 76.7 1.6-16.7 3.3-52.6 3.3-53.4 0 0-106.3-73.7-38.1-165.2 124.6 43 61.4 162.4 61.4 162.4 .5 1.6 .5 23.8 0 33.4 0 0 45.2-89 136.4-57.5-4.2 134-141.9 106.4-141.9 106.4-4.4 27.4-11.2 53.4-20 77.5 0 0 83-91.8 172-20z"/></svg>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="fw-medium text-nowrap">{{ user.quiz_lives }} vite rimanenti</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- levels -->
+            <div class="account-item account-levels d-flex flex-column justify-content-between align-items-center gap-3 p-5 align-self-stretch flex-fill">
+                <div class="fs-3 fw-bold text-light">Livelli</div>
+                <!-- level -->
+                {% for level in levels %}
+                <div class="d-flex align-items-center gap-3">
+                    <!-- level number -->
+                    <div class="level-number {% if user.level >= level.0 %}active{% endif %}">{{ level.0 }}</div>
+                    <!-- level name -->
+                    <div class="level-name {% if user.level >= level.0 %}active{% endif %}">{{ level.1 }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
 </main>
 {% endblock content %}
 
 {% block page_scripts %}
-<script type="text/javascript">
-    $('.message-form').on('submit', function(e){
-        e.preventDefault();
-        var name = $('.message-form').find('.message-name').val();
-        var email = $(this).find('.message-email').val();
-        var description = $(this).find('.message-text').val();
-        $.ajax(
-        {  
-            type:"POST",
-            url: "{% url 'home' %}",
-            headers: {'X-CSRFToken': $('[name=csrfmiddlewaretoken]').attr('value')},
-            data:{
-                name: name,
-                email: email,
-                description: description,
-            },
-            beforeSend: function(){
-                $(".form-loader").css("display", "inline-block");
-
-                $('.alert-message').removeClass('alert-success alert-danger');
-            },
-            success: function( data ) {},
-            complete:function(data){
-                $(".form-loader").hide();
-
-                $("#message-form")[0].reset();
-
-                $('.alert-message').addClass('alert-' + data.responseJSON.color).show();
-                $('.alert-message .info-message').text(data.responseJSON.message);
-
-                setTimeout(function () {
-                    $('.alert-message').fadeOut(500);
-                }, 2500);
-            },
-         })
-    });
-</script>
 {% endblock page_scripts %}

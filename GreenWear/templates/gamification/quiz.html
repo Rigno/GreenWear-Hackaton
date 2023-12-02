@@ -4,48 +4,53 @@
 {% block title %}Quiz - GreenWear{% endblock title %}
 {% block description %}Rispondi alle domande e guadagna punti.{% endblock description %}
 
+{% block page_syle %}<link href="{% static 'css/quiz.css' %}" rel="stylesheet" />{% endblock page_syle %}
+
 {% block content %}
-<main class="">
+<main>
+
+    <div class="row">
+        <!-- Image -->
+        <img class="col-md-5 login-img d-none d-md-block" src="{% static 'assets/quiz.jpg' %}" alt="">
+        <div class="col-md-7 d-flex justify-content-center align-items-start p-5">
+            <form method="POST" action="{% url 'quiz' quiz.id %}" class="quiz-form d-flex flex-column align-items-center flex-fill gap-4">
+                {% csrf_token %}
+                <!-- header -->
+                <h1 class="fw-bold">Quiz</h1>
+                {{ form }}
+                <button class="btn btn-success btn-lg fw-semibold mt-3 w-100" type="submit">Invia</button>
+            </form>
+        </div> 
+    </div>
 
 </main>
 {% endblock content %}
 
 {% block page_scripts %}
+<!-- display correct labels -->
 <script type="text/javascript">
-    $('.message-form').on('submit', function(e){
-        e.preventDefault();
-        var name = $('.message-form').find('.message-name').val();
-        var email = $(this).find('.message-email').val();
-        var description = $(this).find('.message-text').val();
-        $.ajax(
-        {  
-            type:"POST",
-            url: "{% url 'home' %}",
-            headers: {'X-CSRFToken': $('[name=csrfmiddlewaretoken]').attr('value')},
-            data:{
-                name: name,
-                email: email,
-                description: description,
-            },
-            beforeSend: function(){
-                $(".form-loader").css("display", "inline-block");
 
-                $('.alert-message').removeClass('alert-success alert-danger');
-            },
-            success: function( data ) {},
-            complete:function(data){
-                $(".form-loader").hide();
+    var radios = $('label');
 
-                $("#message-form")[0].reset();
+    for (radio of radios) {
+        if ($(radio).attr('for') !== undefined) {
+            $(radio).contents().filter(function() {
+                return this.nodeType === 3; // Node.TEXT_NODE
+                console.log(this.nodeType)
+            }).remove();
+    
+            var input = $(radio).html();
+            var answer = $(radio).children('input').attr('value');
+            $(radio).html(input + answer);
+        }
+    }
 
-                $('.alert-message').addClass('alert-' + data.responseJSON.color).show();
-                $('.alert-message .info-message').text(data.responseJSON.message);
-
-                setTimeout(function () {
-                    $('.alert-message').fadeOut(500);
-                }, 2500);
-            },
-         })
+    $(document).ready(function() {
+        $('label[for]').on('change', function() {
+            $(this).closest('div.quiz-answer').find('label[for]').removeClass('label-active');
+            $(this).addClass('label-active');
+        });
     });
+
 </script>
 {% endblock page_scripts %}

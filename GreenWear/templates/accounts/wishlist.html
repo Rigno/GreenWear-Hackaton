@@ -1,55 +1,130 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load mathfilters %}
 
 {% block title %}Preferiti - GreenWear{% endblock title %}
 {% block description %}Ecco i tuoi preferiti, salva nel carrello o modificali.{% endblock description %}
 
 {% block content %}
-<main class="">
+<main class="m-5">
 
-    {% for product in wishlist_products %}
-    <div class="">{{ product.name }}</div>
-    {% endfor %}
+    <div class="d-flex flex-column justify-content-between align-items-start gap-4 w-100">
+        <!-- header -->
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h1 class="fw-bold">Preferiti</h1>
+            <div class="">{{ wishlist_products|length }} prodotti</div>
+        </div>
+        <div class="border-bottom w-100"></div>
+        {% if wishlist_products|length == 0 %}
+        <div class="d-flex flex-column align-items-center my-5 w-100">
+            <div class="text-center">Nessun prodotto tra i preferiti.</div>
+            <a href="{% url 'shop' %}" class="btn btn-outline-success mt-3">Torna indietro</a>
+        </div>
+        {% else %}
+        <!-- products -->
+        <div class="product-wrapper row">
+            <!--card -->
+            {% for product in wishlist_products %}
+            <div class="whishlist-item col-auto py-3 d-flex align-items-center justify-content-center">
+                <a class="card" href="{% url "product" product.slug %}">
+                    <div class="card-top">
+                        <!-- image -->
+                        {% for image in product.product_images.all %}
+                        {% if image.is_feature %}
+                        <img src="{{ image.image.url }}" class="card-image img-fluid" alt="">
+                        {% endif %}
+                        {% endfor %}
+                        <!-- wishlist -->
+                        <div class="card-wishlist">
+                            {% if product in wishlist_products %}
+                            <i data-feather="heart" fill="#4E4E4E"></i>
+                            {% else %}
+                            <i data-feather="heart"></i>
+                            {% endif %}
+                        </div>
+                        <!-- footprint -->
+                        {% with ratio=product.footprint|div:product.category.average_footprint %}   
+                        {% if ratio < 1 %}
+                        <div class="card-footprint px-3">
+                            <img src="{% static "assets/leaf.svg" %}" class="" alt="">
+                            <div class="fw-semibold">-{{ 1|sub:ratio|mul:100|floatformat:0 }}% di {{ product.category.name }}</div>
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                    </div>
+                    <div class="card-body">
+                        <!-- info -->
+                        <div class="card-text">
+                            <div class="card-brand">{{ product.brand }}</div>
+                            <div class="card-name">{{ product.name }}</div>
+                            <div class="card-price">
+                                {{ product.price }} € 
+                                {% if product.discounted_price %}
+                                <span class="card-discounted-price ps-2">{{ product.discounted_price }} €</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- points -->
+                        {% if product.green_points %}
+                        <div class="card-points">
+                            <div class="points">+{{ product.green_points }}</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" height="1.25rem" viewBox="0 0 512 512">
+                                <path style="fill:#5e8e56" d="M512 32c0 113.6-84.6 207.5-194.2 222c-7.1-53.4-30.6-101.6-65.3-139.3C290.8 46.3 364 0 448 0h32c17.7 0 32 14.3 32 32zM0 96C0 78.3 14.3 64 32 64H64c123.7 0 224 100.3 224 224v32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320C100.3 320 0 219.7 0 96z"/>
+                            </svg>                
+                        </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>            
 
 </main>
 {% endblock content %}
 
 {% block page_scripts %}
+<!-- add to wishlist -->
 <script type="text/javascript">
-    $('.message-form').on('submit', function(e){
+    $('.card-wishlist').on('click', function(e){
         e.preventDefault();
-        var name = $('.message-form').find('.message-name').val();
-        var email = $(this).find('.message-email').val();
-        var description = $(this).find('.message-text').val();
+        var element = $(this).closest('.whishlist-item');
+        console.log(element);
+        console.log(this);
+        var name = $(this).parent().parent().find('.card-name').text();
+        var heart = $(this).children();
         $.ajax(
         {  
             type:"POST",
-            url: "{% url 'home' %}",
-            headers: {'X-CSRFToken': $('[name=csrfmiddlewaretoken]').attr('value')},
+            url: "{% url 'remove_wishlist' %}",
+            headers: {'X-CSRFToken': getCookie('csrftoken')},
             data:{
                 name: name,
-                email: email,
-                description: description,
-            },
-            beforeSend: function(){
-                $(".form-loader").css("display", "inline-block");
-
-                $('.alert-message').removeClass('alert-success alert-danger');
             },
             success: function( data ) {},
-            complete:function(data){
-                $(".form-loader").hide();
-
-                $("#message-form")[0].reset();
-
-                $('.alert-message').addClass('alert-' + data.responseJSON.color).show();
-                $('.alert-message .info-message').text(data.responseJSON.message);
-
-                setTimeout(function () {
-                    $('.alert-message').fadeOut(500);
-                }, 2500);
+            complete:function(data) {
+                if (data.responseJSON.num_items > 0) {
+                    $(element).remove();
+                } else {
+                    window.location.href = '{% url "wishlist" %}';
+                } 
             },
-         })
+         });
+         function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     });
 </script>
 {% endblock page_scripts %}

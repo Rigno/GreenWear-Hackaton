@@ -10,6 +10,17 @@
 {% block content %}
 <main>
 
+    <!-- Alert Messages -->
+    {% if messages %}
+    <div class="info-alert-home alert alert-success position-fixed py-2 px-3" role="alert">
+        {% for message in messages %}
+        {% if forloop.last %}
+        <p class="info-message fs-6 pe-2 m-0">{{ message }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
     <!-- Hero section -->
     <div class="hero">
         <div class="hero-main row">

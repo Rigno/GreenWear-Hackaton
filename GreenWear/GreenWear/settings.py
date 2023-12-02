@@ -43,8 +43,10 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'cart.apps.CartConfig',
+    'gamification.apps.GamificationConfig',
     
     'mathfilters',
+    'nested_admin',
 ]
 
 MIDDLEWARE = [
@@ -80,8 +82,9 @@ TEMPLATES = [
 WSGI_APPLICATION = 'GreenWear.wsgi.application'
 
 AUTH_USER_MODEL = "accounts.CustomUser"
-#LOGIN_REDIRECT_URL = "home"
-#LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "shop"
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_URL = 'login'
 
 
 # Database

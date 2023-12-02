@@ -17,6 +17,21 @@ class Cart(models.Model):
         
     def get_total_items(self):
         return sum(cart_item.quantity for cart_item in self.cartitem_set.all())
+    
+    def get_total(self, discount_code=''):
+        cart_items = self.cartitem_set.all()
+        total = 0
+        for item in cart_items:
+            if item.product.discounted_price:
+                total += item.product.discounted_price * item.quantity
+            else:
+                total += item.product.price * item.quantity
+                
+        if discount_code in [discount.code for discount in self.user.discounts.all()]:
+            save = self.user.discounts.get(code=discount_code).saving
+            total -= save
+        
+        return total if total >= 0 else 0     
 
 
 class CartItem(models.Model):

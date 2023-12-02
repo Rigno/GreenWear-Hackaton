@@ -1,0 +1,29 @@
+.account-item {
+    box-shadow: 0px 11px 13.5px 0px rgba(0, 0, 0, 0.04);
+    border-radius: 0.625rem;
+    background: #FFF;
+}
+.account-image {
+    overflow: hidden;
+    border-radius: 50%;
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    padding: 2px;
+}
+.account-points {
+    max-width: 14rem;
+    width: 100%;
+    height: 2.6rem;
+    background-color: white;
+    border-radius: 1.5625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: var(--green) solid 2px;
+}
+
+.form-login  .form-floating {
+    width: 100%;
+}

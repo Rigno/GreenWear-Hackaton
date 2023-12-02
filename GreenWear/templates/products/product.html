@@ -73,26 +73,22 @@
                 <div class="product-text">{{ product.description }}</div>
                 <!-- size -->
                 <div class="d-flex flex-wrap justify-content-start align-items-center">
-                    {% for size in sizes %}
+                    {% for size in product.sizes.all %}
                     <div class="form-check size-item p-0 m-0">
-                        <input class="form-check-input d-none" type="radio" name="taglia" value="{{ size.1 }}" id="sizeRadio{{ forloop.counter }}" form="cartForm" required>
+                        <input class="form-check-input d-none" type="radio" name="taglia" value="{{ size.name }}" id="sizeRadio{{ forloop.counter }}" form="cartForm" required>
                         <label class="form-check-label w-100 h-100 d-flex justify-content-center align-items-center" for="sizeRadio{{ forloop.counter }}">
-                            {{ size.1 }}
+                            {{ size.name }}
                         </label>
                     </div>
                     {% endfor %}
                 </div>
                 <!-- colors -->
                 <div class="d-flex flex-wrap justify-content-start align-items-center gap-2">
-                    {% for color in colors %}
+                    {% for color in product.colors.all %}
                     <div class="form-check color-item p-0 m-0">
-                        <input class="form-check-input d-none" type="radio" name="colore" value="{{ color.1 }}" id="colorRadio{{ forloop.counter }}" form="cartForm" required>
+                        <input class="form-check-input d-none" type="radio" name="colore" value="{{ color.name }}" id="colorRadio{{ forloop.counter }}" form="cartForm" required>
                         <label class="form-check-label w-100 h-100 d-flex justify-content-center align-items-center" for="colorRadio{{ forloop.counter }}">
-                            {% if color.0 != 'multicolor' %}
-                            <i data-feather="circle" fill="{{ color.0 }}" stroke-width="1"></i>
-                            {% else %}
-                            <i data-feather="plus-circle" stroke-width="1"></i>
-                            {% endif %}
+                            <i data-feather="circle" fill="{{ color.code }}" stroke-width="1"></i>
                         </label>
                     </div>
                     {% endfor %}

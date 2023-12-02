@@ -1,0 +1,70 @@
+.account-item {
+    box-shadow: 0px 11px 13.5px 0px rgba(0, 0, 0, 0.04);
+    border-radius: 0.625rem;
+    background: #FFF;
+}
+.account-image {
+    overflow: hidden;
+    border-radius: 50%;
+    width: 10rem;
+    height: 10rem;
+    object-fit: cover;
+    padding: 2px;
+}
+.account-points {
+    max-width: 14rem;
+    width: 100%;
+    height: 2.6rem;
+    background-color: white;
+    border-radius: 1.5625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: var(--green) solid 2px;
+}
+.rank-points {
+    border-radius: 1.5625rem;
+    background: #5E8E56;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 5px;
+    padding-inline: 0.75rem;
+    padding-block: 0.25rem;
+    width: 6rem;
+}
+.rank-position {
+    width: 1rem;
+    font-weight: bold;
+    text-align: center;
+}
+.account-levels {
+    background-image: url('../assets/levels.jpg');
+    background-position: center;
+    background-size: cover;
+}
+.level-number {
+    display: flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    justify-content: center;
+    align-items: center;
+    color: #FFF;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    background-color: #727272;
+    border-radius: 50%;
+}
+.level-number.active {
+    background-color: #FFD456;
+}
+.level-name {
+    font-weight: 600;
+    font-size: larger;
+    color: #727272;
+}
+.level-name.active {
+    color: #FFF;
+}

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.db.models import Q
 
-from products.models import Product, Brand
+from products.models import Product, Brand, Size, Color
 
 # --- HOME PAGE --- #
 def home(request):
@@ -22,8 +22,8 @@ class Shop(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['sizes'] = Product.SIZES
-        context['colors'] = Product.COLORS
+        context['sizes'] = Size.objects.all()
+        context['colors'] = Color.objects.all()
         context['brands'] = Brand.objects.all()
         return context
     
@@ -62,12 +62,10 @@ class Shop(ListView):
             queryset = queryset.filter(price__lte=float(maxprice))
             
         if size:
-            queryset = queryset.filter(size=size)
+            queryset = queryset.filter(sizes__name=size)
             
         if color:
-            colors = dict((name, value) for value, name in Product.COLORS)
-            actual_color = colors.get(color)
-            queryset = queryset.filter(color=actual_color)
+            queryset = queryset.filter(colors__name=color)
             
         if brand:
             queryset = queryset.filter(brand__name=brand)

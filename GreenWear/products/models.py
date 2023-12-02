@@ -55,6 +55,29 @@ class Brand(models.Model):
     class Meta:
         verbose_name = "brand"
         verbose_name_plural = "brands"
+ 
+        
+class Color(models.Model):   
+    name = models.CharField(max_length=50)
+    code = models.CharField(max_length=7, help_text="Insert the hex code for the color")
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "color"
+        verbose_name_plural = "colors"
+
+    
+class Size(models.Model):   
+    name = models.CharField(max_length=5)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "size"
+        verbose_name_plural = "sizes"
 
 
 class Product(models.Model):
@@ -64,27 +87,6 @@ class Product(models.Model):
         ('U', 'Unisex'),
     )
     
-    SIZES = (
-        ('XS', 'XS'),
-        ('S', 'S'),
-        ('M', 'M'),
-        ('L', 'L'),
-        ('XL', 'XL'),
-    )
-    
-    COLORS = (
-        ('black', 'nero'),
-        ('grey', 'grigio'),
-        ('white', 'bianco'),
-        ('blue', 'blu'),
-        ('green', 'verde'),
-        ('yellow', 'giallo'),
-        ('orange', 'arancione'),
-        ('red', 'rosso'),
-        ('purple', 'viola'),
-        ('multicolor', 'multicolore'),
-    )
-    
     name = models.CharField(max_length=100)
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name="brand")
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="category")
@@ -92,8 +94,8 @@ class Product(models.Model):
     gender = models.CharField(max_length=1, choices=GENDERS)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    size = models.CharField(max_length=2, choices=SIZES)
-    color = models.CharField(max_length=20, choices=COLORS)
+    sizes = models.ManyToManyField(Size, related_name="size")
+    colors = models.ManyToManyField(Color, related_name="color")
     materials = models.ManyToManyField(Material, related_name="materials")
     footprint = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
     green_points = models.PositiveIntegerField(null=True, blank=True)
