@@ -25,7 +25,7 @@
         <!-- Image -->
         <img class="col-md-5 login-img img-fluid d-none d-md-block" src="{% static 'assets/signup.jpg' %}" alt="">
         <!-- Form -->
-        <div class="col-md-7 d-flex justify-content-center align-items-center p-5">
+        <div class="col-md-7 d-flex justify-content-center align-items-center px-5">
             <!-- Box -->
             <div class="login-form d-flex flex-column align-items-center gap-4 p-sm-3">
                 <!-- Heading -->
@@ -69,6 +69,10 @@
                         {{ form.password2 }}
                         <label for="floatingPassword">Conferma password</label>
                     </div>
+                    <div class="form-floating">
+                        {{ form.location }}
+                        <label for="floatingPassword">Inserisci la città dove ti trovi</label>
+                    </div>
                     <button class="btn btn-success btn-lg fw-semibold w-100 mt-3" type="submit">Entra</button>
                 </form>
                 <!-- Redirect -->
@@ -88,5 +92,7 @@
     for (input of inputs) {
         $(input).addClass('form-control');
     }
+    var city = $('.form-login select');
+    $(city).addClass('form-control');
 </script>
 {% endblock page_scripts %}

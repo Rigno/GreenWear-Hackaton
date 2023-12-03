@@ -52,9 +52,11 @@
                         <h1 class="product-title">{{ product.name }}</h1>
                         <!-- Price -->
                         <div class="product-price">
-                            €{{ product.price }}
                             {% if product.discounted_price %}
-                            <span class="product-discounted-price ps-2">€{{ product.discounted_price }}</span>
+                            € {{ product.discounted_price }} 
+                            <span class="card-discounted-price ps-2">€ {{ product.price }}</span>
+                            {% else %}
+                            {{ product.price }} € 
                             {% endif %}
                         </div>
                     </div>
@@ -158,9 +160,9 @@
                     </div>
                     {% else %}
                     <div class="text-wrap text-danger">
-                        Qesto prodotto consuma il 
+                        Questo prodotto consuma il 
                         +{{ ratio|mul:100|floatformat:0|sub:100 }}% di CO2 
-                        rispetto a {{ product.category.name }}
+                        rispetto a {{ product.category.name }},
                         considera di comprare altri articoli
                     </div>
                     {% endif %}

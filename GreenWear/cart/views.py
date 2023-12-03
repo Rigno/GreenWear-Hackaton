@@ -24,10 +24,16 @@ def cart(request):
             user = user
             user.discounts.add(code10)
             user.save()
+            is_applicable = True 
+        else:
+            is_applicable = False
 
         if code in [discount.code for discount in user.discounts.all()]:
             if cart.get_total() < 50:
                 messages.info(request, "Il codice è applicabile solo su una spesa superiore a €50")
+                return redirect('cart')
+            elif not is_applicable:
+                messages.info(request, "Per applicare il codice devi avere almeno 1000 punti green")
                 return redirect('cart')
             discount = user.discounts.get(code=code).saving
             cart_total = cart.get_total(discount_code=code)

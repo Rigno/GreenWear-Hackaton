@@ -45,7 +45,7 @@ class Category(models.Model):
         
 class Material(models.Model):   
     name = models.CharField(max_length=50)
-    weight = models.PositiveIntegerField(default=1, validators=[MaxValueValidator(3)])
+    weight = models.PositiveIntegerField(default=1, validators=[MaxValueValidator(10)])
     location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True, related_name="location")
 
     def __str__(self):
@@ -110,7 +110,7 @@ class Product(models.Model):
     materials = models.ManyToManyField(Material, related_name="materials")
     footprint = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
     green_points = models.PositiveIntegerField(null=True, blank=True)
-    users_wishlist = models.ManyToManyField(CustomUser, related_name="wishlist", blank=True)
+    users_wishlist = models.ManyToManyField(CustomUser, related_name="wishlist", blank=True, editable=False)
     data = models.DateField(auto_now_add=True, editable=False)
     slug = models.SlugField(max_length=100, null=True, blank=True, unique=True)
 
@@ -125,18 +125,21 @@ class Product(models.Model):
     def auto_complete(self, *args, **kwargs):
         self.footprint = calculate_footprints(self.materials.all())
         avg = float(self.category.average_footprint)
+        print(self.footprint)
+        print(avg)
         
         if self.footprint < avg*0.5:
-            self.green_points = 10
+            self.green_points = 30
         elif self.footprint < avg*0.75:
             self.green_points = 20
         elif self.footprint < avg*0.9:
-            self.green_points = 30
+            self.green_points = 10
         else:
             self.green_points = 0
             
         super(Product, self).save(*args, **kwargs)
         self.category.save()
+        super(Product, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "product"

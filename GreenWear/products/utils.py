@@ -1,7 +1,7 @@
 import requests
 
 
-FACTORY_LOCATION = ['45.4628246', '9.0953311'] # Milano: 45.4628246,9.0953311
+FACTORY_LOCATION = ['45.4628246', '9.0953311'] # Milano location
 SHIPPING_TO_LOCATION = ['0', '0']
 
 '''
@@ -41,5 +41,7 @@ def calculate_footprints(materials):
 
     data = response.json()
     total = data['totalCO2']
+    transport = data['transportCO2']
+    production = data['productionCO2']
     
-    return total
+    return production

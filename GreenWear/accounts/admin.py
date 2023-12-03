@@ -8,7 +8,7 @@ from .models import CustomUser, Discount
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    list_display = ["username", "first_name", "last_name", "email", "age", "phone_number", "green_points"]
+    list_display = ["username", "first_name", "last_name", "email", "age", "phone_number", "green_points", "location"]
     
     add_fieldsets = (
         (None, {
@@ -19,7 +19,7 @@ class CustomUserAdmin(UserAdmin):
     
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'age', 'profile_picture')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'age', 'location', 'profile_picture')}),
         ('Data', {'fields': ('green_points', 'level', 'quiz_lives')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Stats', {'fields': ('last_login', 'date_joined')}),

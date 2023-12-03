@@ -56,13 +56,15 @@
                     <!-- infos -->
                     <div class="d-flex flex-column align-items-center justify-content-evenly flex-fill">
                         <!-- name -->
-                        <div class="">Nome: {{ user.first_name }} {{ user.last_name }}</div>
+                        <div>Nome: {{ user.first_name }} {{ user.last_name }}</div>
                         <!-- email -->
-                        <div class="">Email: {{ user.email }}</div>
+                        <div>Email: {{ user.email }}</div>
                         <!-- age -->
-                        <div class="">Età: {{ user.age }}</div>
+                        <div>Età: {{ user.age }}</div>
                         <!-- phone number -->
-                        <div class="">Telefono: {{ user.phone_number }}</div>
+                        <div>Telefono: {{ user.phone_number }}</div>
+                        <!-- location -->
+                        <div>Città: {{ user.get_location_display }}</div>
                     </div>
                 </div>
                 <!-- form -->
@@ -91,6 +93,10 @@
                     <div class="form-floating">
                         {{ form.phone_number }}
                         <label for="floatingPassword">Telefono</label>
+                    </div>
+                    <div class="form-floating">
+                        {{ form.location }}
+                        <label for="floatingPassword">Città</label>
                     </div>
                     <!-- remove image -->
                     {% if form.profile_picture.value %}
@@ -121,5 +127,7 @@
     for (input of inputs) {
         $(input).addClass('form-control');
     }
+    var city = $('.form-login select');
+    $(city).addClass('form-control');
 </script>
 {% endblock page_scripts %}

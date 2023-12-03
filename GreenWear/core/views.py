@@ -47,6 +47,8 @@ class Shop(ListView):
                 queryset = queryset.order_by('-data')
             elif order == 'sostenibili':
                 queryset = queryset.order_by('footprint')
+            elif order == 'punti':
+                queryset = queryset.order_by('-green_points')
             elif order == 'prezzo_maggiore':
                 queryset = queryset.order_by('-price')
             elif order == 'prezzo_minore':

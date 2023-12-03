@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
@@ -66,7 +66,7 @@ def remove_wishlist(request):
 # --- ACCOUNT --- #
 @login_required(login_url='login')
 def account(request):
-    users = CustomUser.objects.all().order_by('-green_points')[0:5]
+    users = CustomUser.objects.all().filter(is_superuser=False).order_by('-green_points')[0:5]
     levels = CustomUser.LEVELS
     quiz = Quiz.objects.last()
     

@@ -47,7 +47,7 @@
                             <div class="d-flex flex-column justify-content-between align-items-start gap-3">
                                 <h2 class="fw-bold">Categorie</h2>
                                 {% for category in categories %}
-                                <a class="filter-item" href="{% update_params 'categoria' category.name|lower request.GET.urlencode %}">
+                                <a class="filter-item" href="{% url "shop" %}?categoria={{ category.name }}">
                                     {{ category.name }}
                                 </a>
                                 {% endfor %}
@@ -147,6 +147,7 @@
                                 <option value="preferiti" {% if ordine == 'Preferiti' %}selected{% endif %}>Preferiti</option>
                                 <option value="nuovi" {% if ordine == 'nuovi' %}selected{% endif %}>Ultimi arrivi</option>
                                 <option value="sostenibili" {% if ordine == 'sostenibili' %}selected{% endif %}>Più sostenibili</option>
+                                <option value="punti" {% if ordine == 'punti' %}selected{% endif %}>Più punti</option>
                                 <option value="prezzo_maggiore" {% if ordine == 'prezzo_maggiore' %}selected{% endif %}>Prezzo maggiore</option>
                                 <option value="prezzo_minore" {% if ordine == 'prezzo_minore' %}selected{% endif %}>Prezzo minore</option>
                                 {% endwith %}
@@ -164,7 +165,7 @@
             <div class="product-wrapper row">
                 <!--card -->
                 {% for product in products %}
-                <div class="col-12 col-lg-6 col-xxl-4 py-3 d-flex align-items-center justify-content-center">
+                <div class="col-12 col-lg-6 col-xxl-4 py-3 d-flex align-items-start justify-content-center">
                     <a class="card" href="{% url "product" product.slug %}">
                         <div class="card-top">
                             <!-- image -->
@@ -183,7 +184,7 @@
                             </div>
                             <!-- footprint -->
                             {% with ratio=product.footprint|div:product.category.average_footprint %}   
-                            {% if ratio < 1 %}
+                            {% if ratio <= 0.9 %}
                             <div class="card-footprint px-3">
                                 <img src="{% static "assets/leaf.svg" %}" class="" alt="">
                                 <div class="fw-semibold">-{{ 1|sub:ratio|mul:100|floatformat:0 }}% di {{ product.category.name }}</div>
@@ -197,9 +198,11 @@
                                 <div class="card-brand">{{ product.brand }}</div>
                                 <div class="card-name">{{ product.name }}</div>
                                 <div class="card-price">
-                                    {{ product.price }} € 
                                     {% if product.discounted_price %}
-                                    <span class="card-discounted-price ps-2">{{ product.discounted_price }} €</span>
+                                    {{ product.discounted_price }} € 
+                                    <span class="card-discounted-price ps-2">{{ product.price }} €</span>
+                                    {% else %}
+                                    {{ product.price }} € 
                                     {% endif %}
                                 </div>
                             </div>

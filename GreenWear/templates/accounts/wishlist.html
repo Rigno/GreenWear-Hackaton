@@ -44,7 +44,7 @@
                         </div>
                         <!-- footprint -->
                         {% with ratio=product.footprint|div:product.category.average_footprint %}   
-                        {% if ratio < 1 %}
+                        {% if ratio <= 0.9 %}
                         <div class="card-footprint px-3">
                             <img src="{% static "assets/leaf.svg" %}" class="" alt="">
                             <div class="fw-semibold">-{{ 1|sub:ratio|mul:100|floatformat:0 }}% di {{ product.category.name }}</div>
@@ -58,9 +58,11 @@
                             <div class="card-brand">{{ product.brand }}</div>
                             <div class="card-name">{{ product.name }}</div>
                             <div class="card-price">
-                                {{ product.price }} € 
                                 {% if product.discounted_price %}
-                                <span class="card-discounted-price ps-2">{{ product.discounted_price }} €</span>
+                                {{ product.discounted_price }} € 
+                                <span class="card-discounted-price ps-2">{{ product.price }} €</span>
+                                {% else %}
+                                {{ product.price }} € 
                                 {% endif %}
                             </div>
                         </div>
