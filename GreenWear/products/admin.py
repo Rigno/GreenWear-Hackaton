@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models  import  Group
-from .models import Product, ProductImage, Category, Brand, Material, Size, Color
+from .models import Product, ProductImage, Category, Brand, Material, Size, Color, Location
 
 
 admin.site.unregister(Group)
@@ -28,7 +28,17 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'average_footprint')
     readonly_fields = ['average_footprint', 'slug']
     
+@admin.register(Color)
+class ColorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code')
+    
+@admin.register(Material)
+class MaterialAdmin(admin.ModelAdmin):
+    list_display = ('name', 'weight', 'location')
+    
+@admin.register(Location)
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'latitude', 'longitude')
+    
 admin.site.register(Brand)
 admin.site.register(Size)
-admin.site.register(Color)
-admin.site.register(Material)

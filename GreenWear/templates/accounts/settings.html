@@ -92,14 +92,19 @@
                         {{ form.phone_number }}
                         <label for="floatingPassword">Telefono</label>
                     </div>
-                    <!-- upload image -->
-                    <div>
-                        <input type="{{ form.profile_picture.field.widget.input_type }}"
-                            name="{{ form.profile_picture.name }}"
-                            id="{{ form.profile_picture.id }}"
-                            value="{{ form.profile_picture.value }}"
-                            {% if form.profile_picture.value %}checked{% endif %}>
+                    <!-- remove image -->
+                    {% if form.profile_picture.value %}
+                    <div class="d-flex align-self-start justify-content-start gap-3">
+                        <label class="text-nowrap" for="{{ form.profile_picture.name }}-clear_id">Svuota immagine: </label>
+                        <input class="form-check-input" type="checkbox" name="{{ form.profile_picture.name }}-clear" id="{{ form.profile_picture.name }}-clear_id">
                     </div>
+                    {% endif %}
+                    <!-- upload image -->
+                    <input type="{{ form.profile_picture.field.widget.input_type }}"
+                        name="{{ form.profile_picture.name }}"
+                        id="{{ form.profile_picture.id }}"
+                        value="{{ form.profile_picture.value }}"
+                        {% if form.profile_picture.value %}checked{% endif %}>
                     <!-- button -->
                     <button class="btn btn-success btn-lg fw-semibold w-100 mt-3" type="submit">Aggiorna</button>
                 </form>

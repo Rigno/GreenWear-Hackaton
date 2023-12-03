@@ -6,6 +6,18 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from .utils import calculate_footprints
 
 
+class Location(models.Model):   
+    name = models.CharField(max_length=50)
+    latitude = models.FloatField(blank=True, null=True, validators=[MinValueValidator(-90), MaxValueValidator(90)])
+    longitude = models.FloatField(blank=True, null=True, validators=[MinValueValidator(-180), MaxValueValidator(180)])
+
+    def __str__(self):
+        return self.name
+        
+    class Meta:
+        verbose_name = "location"
+        verbose_name_plural = "locations"
+
 class Category(models.Model):   
     name = models.CharField(max_length=50)
     average_footprint = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
@@ -33,9 +45,8 @@ class Category(models.Model):
         
 class Material(models.Model):   
     name = models.CharField(max_length=50)
-    weight = models.PositiveIntegerField(default=1)
-    latitude = models.FloatField(blank=True, null=True, validators=[MinValueValidator(-90), MaxValueValidator(90)])
-    longitude = models.FloatField(blank=True, null=True, validators=[MinValueValidator(-180), MaxValueValidator(180)])
+    weight = models.PositiveIntegerField(default=1, validators=[MaxValueValidator(3)])
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, blank=True, null=True, related_name="location")
 
     def __str__(self):
         return self.name

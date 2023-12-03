@@ -40,7 +40,7 @@ a {
     transform: translateX(50%);
 }
 .info-alert-home {
-    max-width: 50%;
+    max-width: 75%;
     bottom: 1.5rem;
     left: 2rem;
     z-index: 5000;
