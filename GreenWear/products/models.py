@@ -125,8 +125,6 @@ class Product(models.Model):
     def auto_complete(self, *args, **kwargs):
         self.footprint = calculate_footprints(self.materials.all())
         avg = float(self.category.average_footprint)
-        print(self.footprint)
-        print(avg)
         
         if self.footprint < avg*0.5:
             self.green_points = 30

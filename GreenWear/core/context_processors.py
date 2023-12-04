@@ -11,7 +11,7 @@ def custom_context(request):
         wishlist_products = None
 
     return {
-        'categories': Category.objects.all(),
+        'categories': Category.objects.all().order_by('name'),
         'cart_items': total_items,
         'wishlist_products': wishlist_products,
     }

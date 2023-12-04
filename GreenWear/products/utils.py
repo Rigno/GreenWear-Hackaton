@@ -1,8 +1,6 @@
 import requests
+from core.models import FACTORY_LOCATION
 
-
-FACTORY_LOCATION = ['45.4628246', '9.0953311'] # Milano location
-SHIPPING_TO_LOCATION = ['0', '0']
 
 '''
 API REQUEST:
@@ -23,7 +21,7 @@ def calculate_footprints(materials):
     payload = {
         "transport": {
             "shippingFrom": "{0};{1}".format(FACTORY_LOCATION[0], FACTORY_LOCATION[1]),
-            "shippingTo": "{0};{1}".format(SHIPPING_TO_LOCATION[0], SHIPPING_TO_LOCATION[1])
+            "shippingTo": "0;0"
         },
         "production": []
     }
@@ -40,8 +38,6 @@ def calculate_footprints(materials):
     response = requests.post(url, json=payload, headers=headers)
 
     data = response.json()
-    total = data['totalCO2']
-    transport = data['transportCO2']
     production = data['productionCO2']
     
     return production

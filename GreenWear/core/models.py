@@ -1,3 +1,5 @@
 from django.db import models
 
-# Create your models here.
+
+FACTORY_LOCATION = ['45.4628246', '9.0953311'] # Milano location
+

@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+import requests
 
-from .models import Cart
+from cart.models import Cart
 from products.models import Product
 from accounts.models import Discount
+from core.models import FACTORY_LOCATION
 
 
 # --- CART --- #
@@ -13,7 +15,35 @@ def cart(request):
     user = request.user
     cart, created = Cart.objects.get_or_create(user=user)
     cart_items = cart.products.all()
+    user_location = user.location
     
+    # calculate shipping footprint:
+    url = 'http://194.233.164.36/api/calculateCO2'
+    headers = {
+        'x-tenant': 'greenwear',
+        'x-apikey': 'XNwtvpHY6skocyd+0B+I1w4p51oWdxXEjREEpa9LPcE=',
+    }
+
+    payload = {
+        "transport": {
+            "shippingFrom": "{0};{1}".format(FACTORY_LOCATION[0], FACTORY_LOCATION[1]),
+            "shippingTo": user_location
+        },
+        "production": [
+        {
+            "materialLocation": "0;0",
+            "factoryLocation": "0;0",
+            "weight": 1,
+            "material": "metallo"
+        }
+        ]
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    data = response.json()
+    shipping_footprint = data['transportCO2']
+    
+    # handel cart total and discount codes:
     if request.method == 'GET':
         code = request.GET.get('codice_sconto')
         discount = 0
@@ -50,6 +80,7 @@ def cart(request):
         'products': cart_items,
         'cart_total': cart_total,
         'discount': discount,
+        'shipping_footprint': shipping_footprint,
     }
     return render(request, 'cart/cart.html', context)
 
