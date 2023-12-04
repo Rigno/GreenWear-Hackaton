@@ -138,7 +138,7 @@ def checkout(request):
         else:
             messages.info(request, "L'acquisto è stato completato con successo")
         
-        return redirect('home')
+        return redirect('shop')
     
     else:
         messages.info(request, "Il carrello è vuoto, aggiungi delgi articoli prima di continuare")
