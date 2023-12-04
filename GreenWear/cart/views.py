@@ -56,6 +56,7 @@ def cart(request):
             user.save()
             is_applicable = True 
         else:
+            request.session['discount'] = "not_valid"
             is_applicable = False
 
         if code in [discount.code for discount in user.discounts.all()]:
@@ -69,6 +70,7 @@ def cart(request):
             cart_total = cart.get_total(discount_code=code)
             request.session['discount'] = "is_valid"
         elif code:
+            request.session['discount'] = "not_valid"
             messages.info(request, "Il codice sconto non è valido")
 
     else:
@@ -120,8 +122,8 @@ def checkout(request):
     
     if len(cart_items) > 0:
         points = 0
-        for product in [item.product for item in cart_items]:
-            points += product.green_points
+        for i in [item for item in cart_items]:
+            points += (i.product.green_points * i.quantity)
             
         cart.delete()
         

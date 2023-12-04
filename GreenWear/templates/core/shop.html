@@ -28,6 +28,18 @@
 </div>
 <main class="m-5">
 
+    <!-- Alert Messages -->
+    {% if messages %}
+    <div class="info-alert-home alert alert-success position-fixed py-2 px-3" role="alert">
+        {% for message in messages %}
+        {% if forloop.last %}
+        <p class="info-message fs-6 pe-2 m-0">{{ message }}</p>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- shop -->
     <div class="row">
         <!-- Filters -->
         <div class="col-12 col-md-6 col-lg-3">
@@ -276,7 +288,7 @@
             data:{
                 name: name,
             },
-            success: function( data ) {},
+            success: function(data) {},
             complete:function(data) {
                 if (data.responseJSON.is_present) {
                     $(heart).attr('fill', '#4E4E4E');
